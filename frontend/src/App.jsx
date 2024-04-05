@@ -1,11 +1,20 @@
-
+import {BrowserRouter as Router,Routes,Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 
 function App() {
 
   return (
-    <>
-      <h1 className="text-2xl bg-slate-500">Hllwo World</h1>
-    </>
+    <Router>
+      <Navbar/>
+      <Routes>
+        <Route path='/' element={<Home/>}/>
+        <Route path='/login' element={<Login/>}/>
+      </Routes>
+      <Footer/>
+    </Router>
   )
 }
 
