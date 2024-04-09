@@ -3,7 +3,7 @@ import Mylist from './pages/Mylist'
 import Login from './pages/Login'
 import PageNotFound from './pages/PageNotFound'
 import Navbar from './components/Navbar'
-
+import ProtectedRoute from './components/ProtectedRoute'
 
 function Logout() {
   localStorage.clear()
@@ -21,8 +21,8 @@ function App() {
       <Navbar/>
       <Routes>
         
-        <Route path='/' element={<Mylist/>}/>
-        <Route path='/mylist' element={<Mylist/>}/>
+        <Route path='/' element={<ProtectedRoute><Mylist/></ProtectedRoute>}/>
+        <Route path='/mylist' element={<ProtectedRoute><Mylist/></ProtectedRoute>}/>
         <Route path="/logout" element={<Logout />} />
         <Route path='/login' element={<Login route="/api/token/" method="login"/>}/>
         <Route path='/register' element={<RegisterAndLogout/>}/>

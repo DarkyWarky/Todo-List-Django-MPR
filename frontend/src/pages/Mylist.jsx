@@ -19,7 +19,7 @@ const deleteTask = (id) => {
       .then((res) => {
           if (res.status === 204) alert("Note deleted!");
           else alert("Failed to delete note.");
-          getTasks();
+          window.location.reload()
       })
       .catch((error) => alert(error));
 };
@@ -147,7 +147,7 @@ const [formData, setFormData] = useState({
             .then((res) => {
                 if (res.status === 201) alert("Note created!");
                 else alert("Failed to make note.");
-                getTasks();
+                window.location.reload()
                 setFormData({
                   content: '',
                   title: '',
