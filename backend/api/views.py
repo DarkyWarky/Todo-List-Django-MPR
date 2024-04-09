@@ -4,6 +4,7 @@ from rest_framework import generics
 from .serializers import UserSerializer,TasksSerializer
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import Tasks
+from rest_framework.response import Response
 
 #--------------------------------------------- Insert & Delete -------------------------------------------#
 
@@ -12,7 +13,7 @@ class TasksCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
+        user = self.request.user.id
         return Tasks.objects.filter(user_id = user)
     
     def perform_create(self,serializer):
@@ -29,6 +30,13 @@ class TasksDelete(generics.DestroyAPIView):
         user = self.request.user
         return Tasks.objects.filter(user_id = user)
 
+class TasksUpdate(generics.RetrieveUpdateAPIView):
+    serializer_class = TasksSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Tasks.objects.filter(user_id=user)
 
 # ------------------------------------------------ Tasks Filters -------------------------------------------------- #
 
@@ -39,10 +47,11 @@ class TasksPriorityFilter(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        priority = self.request.query_params.get('priority')
+
         queryset = Tasks.objects.filter(user_id=user)
-        queryset = queryset.filter(priority=priority)
-        queryset = sorted(queryset, key=lambda x: x.priority)
+
+        queryset = queryset.order_by('-priority')
+
         return queryset
 
 class TasksCompletedFilter(generics.ListAPIView):

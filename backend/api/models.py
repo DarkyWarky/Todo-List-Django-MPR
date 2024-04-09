@@ -9,7 +9,7 @@ class Tasks(models.Model):
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     priority = models.IntegerField(choices=PRIORITY_CHOICE)
-    due_date = models.DateTimeField(blank=True,null=True)
+    due_date = models.DateField(blank=True,null=True)
 
     def __str__(self) :
         return self.title

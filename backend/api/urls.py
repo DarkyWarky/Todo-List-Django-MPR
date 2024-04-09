@@ -7,4 +7,5 @@ urlpatterns =[
     path('tasks/priority/', views.TasksPriorityFilter.as_view(), name="tasks-priority-filter"),
     path('tasks/completed/', views.TasksCompletedFilter.as_view(), name="tasks-completed-filter"),
     path('tasks/remaining/', views.TasksRemainingFilter.as_view(), name="tasks-remaining-filter"),
+    path('tasks/update/<int:pk>/', views.TasksUpdate.as_view(), name='tasks-update')
 ]

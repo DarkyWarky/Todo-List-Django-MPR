@@ -1,10 +1,9 @@
 import * as React from 'react';
+import api from "../api";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,32 +11,52 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
+import {useNavigate} from "react-router-dom"
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import { useState } from 'react';
 
 const defaultTheme = createTheme();
 
-export default function Login() {
-  const handleSubmit = (event) => {
+export default function Login({route,method}) {
+  const navigate= useNavigate()
+  const [errors, setErrors] = React.useState({});
+
+  const name = method === "login" ? "Login" : "Register";
+  
+  const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const email = data.get('email');
+    const pass_word = data.get('password');
+    const user_name = data.get('firstName');
+    console.log(user_name,pass_word)
+    
+    
+    const errors = {};
+    if (!email || !pass_word || !firstName) {
+      errors.emptyFields = true;
+    }
+    if (!email.includes('@')) {
+      errors.invalidEmail = true;
+    }
+    setErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+      try {
+        console.log(user_name,pass_word)
+        const res = await api.post(route, { "username":user_name, "password":pass_word })
+        if (method === "login") {
+            localStorage.setItem(ACCESS_TOKEN, res.data.access);
+            localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+            navigate("/")
+        } else {
+            navigate("/login")
+        }
+    } catch (error) {
+        alert(error)
+    }
+      
+    }
   };
 
   return (
@@ -56,31 +75,22 @@ export default function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            {name}
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
                   autoComplete="given-name"
                   name="firstName"
                   required
                   fullWidth
                   id="firstName"
-                  label="First Name"
+                  label="UserName"
                   autoFocus
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   required
@@ -102,31 +112,19 @@ export default function Login() {
                   autoComplete="new-password"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid>
+              {errors.emptyFields && <Typography variant="body2" color="error">Please fill in all fields.</Typography>}
+              {errors.invalidEmail && <Typography variant="body2" color="error">Invalid email address.</Typography>}
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2,p:1,backgroundColor:'#5CDBC8','&:hover': {backgroundColor: '#3FAF9F'},fontWeight:'bold',fontSize: '1rem'}}
             >
-              Sign Up
+              {method!=='login'?"Sign up":'Sign In'}
             </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );
