@@ -13,6 +13,7 @@ const Mylist = () => {
     handleButtonClick(selectedButton)
 }, []);
 const navigate = useNavigate()
+
 const deleteTask = (id) => {
   api
       .delete(`/api/tasks/delete/${id}/`)
